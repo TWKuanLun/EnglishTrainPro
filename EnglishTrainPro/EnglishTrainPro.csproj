@@ -39,6 +39,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity.Design" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -66,10 +67,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="cs\CambridgeDictionaryFactory.cs" />
+    <Compile Include="cs\DictionarySwitch.cs" />
     <Compile Include="cs\Sentence.cs" />
     <Compile Include="cs\WebDictionaryFactory.cs" />
     <Compile Include="cs\Word.cs" />
     <Compile Include="cs\WordBuilder.cs" />
+    <Compile Include="cs\WordHelper.cs" />
     <Compile Include="cs\YahooDictionaryFactory.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

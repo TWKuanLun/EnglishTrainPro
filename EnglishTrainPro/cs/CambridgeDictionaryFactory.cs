@@ -25,6 +25,8 @@ namespace EnglishTrainPro.cs
                 var meaningsByPos = new Dictionary<string, List<string>>();
                 var sentencesByPos = new Dictionary<string, Dictionary<string, List<Sentence>>>();
                 var POS_Blocks = htmlDoc.GetElementsByTag("div").Where(x => x.Attr("class") == "entry-body__el clrd js-share-holder").ToArray();
+                if (POS_Blocks.Length == 0)
+                    return word;
                 HashSet<string> phonetics = new HashSet<string>();
                 foreach (var POS_Block in POS_Blocks)
                 {
@@ -73,7 +75,7 @@ namespace EnglishTrainPro.cs
             }
             catch (Exception e)
             {
-                MessageBox.Show($"Error : {e.Message}");
+                //MessageBox.Show($"Error : {e.Message}");
             }
             return word;
         }

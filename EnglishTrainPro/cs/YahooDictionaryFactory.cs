@@ -26,7 +26,7 @@ namespace EnglishTrainPro.cs
                 var meaningBlock = allBlock.GetElementsByTag("div").First(x => x.Attr("class") == "grp grp-tab-content-explanation tabsContent tab-content-explanation tabActived");
 
                 var phonetic = htmlDoc.GetElementsByTag("div").First(x => x.Attr("class") == "compList ml-25 d-ib").Text();
-                var phonetics = phonetic.Replace('ˋ', '`');
+                phonetic = phonetic.Replace('ˋ', '`');
 
                 var rows = meaningBlock.GetElementsByTag("li").ToArray();
                 var sentencesByPos = new Dictionary<string, Dictionary<string, List<Sentence>>>();
@@ -61,11 +61,11 @@ namespace EnglishTrainPro.cs
                         sentencesByPos[partOfSpeech] = new Dictionary<string, List<Sentence>>();
                     }
                 }
-                word = new YahooWord(wordStr, sentencesByPos, phonetics);
+                word = new YahooWord(wordStr, sentencesByPos, phonetic);
             }
             catch (Exception e)
             {
-                MessageBox.Show($"Error : {e.Message}");
+                //MessageBox.Show($"Error : {e.Message}");
             }
             return word;
         }

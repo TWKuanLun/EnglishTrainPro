@@ -9,12 +9,18 @@ using System.Net;
 
 namespace EnglishTrainPro.cs
 {
+    public enum AddResult
+    {
+        Success, SearchFail, HaveWord
+    }
     class WordBuilder
     {
+        WordHelper helper = new WordHelper();
+
         private string DebugOrReleasePath = Directory.GetCurrentDirectory();
         public event EventHandler ProgressChanged;
-        private decimal _progress;
-        public decimal Progress
+        private int _progress;
+        public int Progress
         {
             get { return _progress; }
             set
@@ -27,42 +33,56 @@ namespace EnglishTrainPro.cs
         {
             ProgressChanged?.Invoke(this, e);
         }
-        public void CreateWord(string wordStr)
+        public AddResult CreateWord(string wordStr)
         {
-            Progress = 0;
+            wordStr = helper.getVerbRoot(wordStr);
+            wordStr = helper.getSingularNoun(wordStr);
+            
             wordStr = wordStr.ToLower();
             DirectoryInfo rootDirectory = new DirectoryInfo($"{DebugOrReleasePath}\\WordData");
             rootDirectory.Create();//目錄已存在不作用
             DirectoryInfo[] subDirectories = rootDirectory.GetDirectories();
-            Directory.CreateDirectory($@"{DebugOrReleasePath}\WordData\{wordStr}");
+            DirectoryInfo wordDirectory = new DirectoryInfo($@"{DebugOrReleasePath}\WordData\{wordStr}");
             var findWord = subDirectories.Where(x => x.Name == wordStr).SingleOrDefault();
             if (findWord != null)//已有此單字
-                return;
+                return AddResult.HaveWord;
             var cambridgeFactory = new CambridgeDictionaryFactory();
             var yahooFactory = new YahooDictionaryFactory();
-            DownloadWordMp3(wordStr);
-            var tCambridge = Task.Run(() => cambridgeFactory.CreateWordData(wordStr));
-            var tYahoo = Task.Run(() => yahooFactory.CreateWordData(wordStr));
+            var tCambridge = Task.Run(() => cambridgeFactory.CreateWordData(wordStr, wordDirectory));
+            var tYahoo = Task.Run(() => yahooFactory.CreateWordData(wordStr, wordDirectory));
             tCambridge.Wait();
             tYahoo.Wait();
-            Progress = 50;
-            var cambridgeWord = cambridgeFactory.GetWord(wordStr);
-            var yahooWord = yahooFactory.GetWord(wordStr);
-            CreateSentencesMp3(cambridgeWord, cambridgeFactory.Type.ToString());
-            Progress = 75;
-            CreateSentencesMp3(yahooWord, yahooFactory.Type.ToString());
-            Progress = 100;
+            if (!tCambridge.Result && !tYahoo.Result)
+                return AddResult.SearchFail;
+            DownloadWordMp3(wordStr);
+            if (tYahoo.Result)
+            {
+                var yahooWord = yahooFactory.GetWord(wordStr);
+                CreateSentencesMp3(yahooWord, yahooFactory.Type.ToString());
+            }
+            if (tCambridge.Result)
+            {
+                var cambridgeWord = cambridgeFactory.GetWord(wordStr);
+                CreateSentencesMp3(cambridgeWord, cambridgeFactory.Type.ToString());
+            }
+            return AddResult.Success;
         }
-        public void CreateWords(string[] wordStrs)
+        private AddResult[] CreateWords(string[] wordStrs)
         {
+            var result = new AddResult[wordStrs.Length];
             Progress = 0;
             for(int i = 0; i < wordStrs.Length; i++)
             {
-                CreateWord(wordStrs[i]);
+                result[i] = CreateWord(wordStrs[i]);
                 Progress = 100 * (i + 1) / wordStrs.Length;
             }
             //防止被檔IP
-            Thread.Sleep(new Random(new Guid().GetHashCode()).Next(5000));
+            Task.Delay(new Random(new Guid().GetHashCode()).Next(5000));
+            return result;
+        }
+        public Task<AddResult[]> TaskCreateWords(string[] wordStrs)
+        {
+            return Task.Factory.StartNew(() => CreateWords(wordStrs));
         }
         private bool WebDownloadFile(string source, string destination)
         {

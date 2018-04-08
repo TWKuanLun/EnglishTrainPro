@@ -25,14 +25,16 @@ namespace EnglishTrainPro.cs
             word = GetWordByHtml(htmlDoc, wordStr);
             return word;
         }
-        public bool CreateWordData(string wordStr)
+        public bool CreateWordData(string wordStr, DirectoryInfo path)
         {
             var htmlStr = GetHtml(GetWordURL(wordStr));
             NSoup.Nodes.Document htmlDoc = NSoup.NSoupClient.Parse(htmlStr);
             var word = GetWordByHtml(htmlDoc, wordStr);
             if (word == null)
                 return false;
-            SaveData($@"{DebugOrReleasePath}\WordData\{wordStr}\{Type}Word.txt", word);
+            path.Create();
+            SaveData($@"{path.FullName}\{Type}Word.txt", word);
+            //SaveData($@"{DebugOrReleasePath}\WordData\{wordStr}\{Type}Word.txt", word);
             return true;
         }
         public DictionaryType Type { get; set; }
