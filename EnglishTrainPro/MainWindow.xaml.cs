@@ -25,8 +25,11 @@ namespace EnglishTrainPro
         public MainWindow()
         {
             InitializeComponent();
-            //DictionarySwitch ds = new DictionarySwitch();
-            //ds.SetDictionarySwitchTabControl(SearchGrid);
+            
+            var yahooGrid = new Grid();
+            YahooWordGrid test = new YahooWordGrid("architecture", yahooGrid);
+            DictionarySwitch ds = new DictionarySwitch();
+            ds.SetDictionarySwitchTabControl(SearchGrid, yahooGrid, new Grid());
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)

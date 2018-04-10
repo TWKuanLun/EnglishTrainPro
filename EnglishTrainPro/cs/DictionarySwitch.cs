@@ -10,19 +10,19 @@ namespace EnglishTrainPro.cs
 {
     class DictionarySwitch
     {
-        public void SetDictionarySwitchTabControl(Grid grid)
+        public void SetDictionarySwitchTabControl(Grid grid, Grid  yahooGrid, Grid Cambridge)
         {
             var tabControl = new TabControl();
             tabControl.Background = Brushes.Black;
 
             var yahooTabItem = new TabItem();
             yahooTabItem.Header = "Yahoo";
-            yahooTabItem.Content = new Grid();
+            yahooTabItem.Content = yahooGrid;
             yahooTabItem.IsSelected = true;
 
             var CambridgeTabItem = new TabItem();
             CambridgeTabItem.Header = "Cambridge";
-            CambridgeTabItem.Content = new Grid();
+            CambridgeTabItem.Content = Cambridge;
 
             tabControl.Items.Add(yahooTabItem);
             tabControl.Items.Add(CambridgeTabItem);
