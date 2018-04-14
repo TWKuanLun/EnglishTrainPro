@@ -87,7 +87,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="4*"/>
                         </Grid.ColumnDefinitions>
-                        <ListBox Name="WordListBox" Grid.Column="0" FontSize="25" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="Black" Foreground="White"/>
+                        <ListBox Name="Local_WordListBox" Grid.Column="0" FontSize="25" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="Black" Foreground="White"/>
                         <Grid Name="Local_WordGrid" Grid.Column="1"/>
                     </Grid>
                 </Grid>

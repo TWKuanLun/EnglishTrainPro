@@ -58,6 +58,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DataObject\CambridgeWord.cs" />
+    <Compile Include="DataObject\YahooWord.cs" />
+    <Compile Include="UIComponent\GridLabel.cs" />
+    <Compile Include="UIComponent\SentencePlayer.cs" />
+    <Compile Include="UIComponent\WordButton.cs" />
+    <Compile Include="UIComponent\WordDataGrid.cs" />
+    <Compile Include="UIComponent\WordPlayer.cs" />
+    <Compile Include="UIComponent\WordTitleGrid.cs" />
+    <Compile Include="wordExplanationWindow.xaml.cs">
+      <DependentUpon>wordExplanationWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -66,21 +77,25 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="cs\CambridgeDictionaryFactory.cs" />
-    <Compile Include="cs\CambridgeWordGrid.cs" />
-    <Compile Include="cs\DictionarySwitch.cs" />
-    <Compile Include="cs\Sentence.cs" />
-    <Compile Include="cs\WebDictionaryFactory.cs" />
-    <Compile Include="cs\Word.cs" />
-    <Compile Include="cs\WordBuilder.cs" />
-    <Compile Include="cs\WordGrid.cs" />
-    <Compile Include="cs\WordHelper.cs" />
-    <Compile Include="cs\YahooDictionaryFactory.cs" />
-    <Compile Include="cs\YahooWordGrid.cs" />
+    <Compile Include="DataFactory\CambridgeDictionaryFactory.cs" />
+    <Compile Include="Display\CambridgeGridBuilder.cs" />
+    <Compile Include="Display\DictionarySwitchTabGrid.cs" />
+    <Compile Include="DataObject\Sentence.cs" />
+    <Compile Include="DataFactory\WebDictionaryFactory.cs" />
+    <Compile Include="DataObject\Word.cs" />
+    <Compile Include="DataFactory\WordBuilder.cs" />
+    <Compile Include="Display\IWordGrid.cs" />
+    <Compile Include="DataFactory\WordHelper.cs" />
+    <Compile Include="DataFactory\YahooDictionaryFactory.cs" />
+    <Compile Include="Display\YahooGridBuilder.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="wordExplanationWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -128,5 +143,6 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EnglishTrainPro.cs
+namespace EnglishTrainPro.DataObject
 {
     [Serializable]
     class Sentence

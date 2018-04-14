@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace EnglishTrainPro.cs
+namespace EnglishTrainPro.DataFactory
 {
     class WordHelper
     {
@@ -59,6 +57,32 @@ namespace EnglishTrainPro.cs
         public string getSingularNoun(string n)
         {
             return System.Data.Entity.Design.PluralizationServices.PluralizationService.CreateService(System.Globalization.CultureInfo.GetCultureInfo("en-us")).Singularize(n);
+        }
+        public void getMp3Path(string wordStr, ref List<string> yahooSentencePaths, ref List<string> cambridgeSentencePaths, List<string> wordPaths)
+        {
+            DirectoryInfo dir = new DirectoryInfo($@"{CurrentPath}\WordData\{wordStr}");
+            foreach (var file in dir.GetFiles())
+            {
+                if (file.Name.Substring(file.Name.Length - 4) != ".mp3")
+                    continue;
+                if (file.Name.Contains("Sentence"))
+                {
+                    if (file.Name.Contains("Yahoo"))
+                        yahooSentencePaths.Add(file.FullName);
+                    else if (file.Name.Contains("Cambridge"))
+                        cambridgeSentencePaths.Add(file.FullName);
+                    continue;
+                }
+                wordPaths.Add(file.FullName);
+            }
+
+            //將1,11,12,2,3,4,5,6,7,8,9,10順序變成1,2,3,4,5,6,7,8,9,10,11,12
+            //以下需要ref
+            var cambridgeStrLength = $@"{CurrentPath}\WordData\{wordStr}\CambridgeSentence".Length;
+            cambridgeSentencePaths = cambridgeSentencePaths.OrderBy(x => Convert.ToInt32(x.Substring(cambridgeStrLength, x.LastIndexOf(".mp3") - cambridgeStrLength))).ToList();
+
+            var yahooStrLength = $@"{CurrentPath}\WordData\{wordStr}\YahooSentence".Length;
+            yahooSentencePaths = yahooSentencePaths.OrderBy(x => Convert.ToInt32(x.Substring(yahooStrLength, x.LastIndexOf(".mp3") - yahooStrLength))).ToList();
         }
     }
 }

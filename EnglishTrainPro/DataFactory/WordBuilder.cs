@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using EnglishTrainPro.DataObject;
+using System;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Net;
+using System.Threading.Tasks;
 
-namespace EnglishTrainPro.cs
+namespace EnglishTrainPro.DataFactory
 {
     public enum AddResult
     {
@@ -142,6 +140,10 @@ namespace EnglishTrainPro.cs
                     }
                 }
             }
+        }
+        public void RemoveWord(string wordStr)
+        {
+            Directory.Delete($@"{DebugOrReleasePath}\WordData\{wordStr}", true);
         }
     }
 }

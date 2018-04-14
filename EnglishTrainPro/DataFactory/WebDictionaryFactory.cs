@@ -1,11 +1,13 @@
-﻿using NSoup;
+﻿using EnglishTrainPro.DataObject;
+using NSoup;
 using NSoup.Nodes;
 using System;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Windows;
 
-namespace EnglishTrainPro.cs
+namespace EnglishTrainPro.DataFactory
 {
     public enum DictionaryType
     {
@@ -64,7 +66,7 @@ namespace EnglishTrainPro.cs
                     switch (Type)
                     {
                         case DictionaryType.Yahoo:
-                            word = (YahooWord)myBinaryFormatter.Deserialize(oFileStream);
+                            word = (Word)myBinaryFormatter.Deserialize(oFileStream);
                             break;
                         case DictionaryType.Cambridge:
                             word = (CambridgeWord)myBinaryFormatter.Deserialize(oFileStream);

@@ -1,10 +1,10 @@
-﻿using NSoup.Nodes;
+﻿using EnglishTrainPro.DataObject;
+using NSoup.Nodes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 
-namespace EnglishTrainPro.cs
+namespace EnglishTrainPro.DataFactory
 {
     class CambridgeDictionaryFactory : WebDictionaryFactory
     {

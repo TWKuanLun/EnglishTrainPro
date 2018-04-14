@@ -1,0 +1,28 @@
+﻿<Window x:Class="EnglishTrainPro.wordExplanationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EnglishTrainPro"
+        mc:Ignorable="d" Background="Black"
+        Title="單字解釋" Closing="Window_Closing" Height="702" Width="900">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="12*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Name="mainGrid"/>
+
+        <Label Grid.Row="1" Background="RosyBrown" Content="下載此單字" FontSize="30" HorizontalContentAlignment="Center"/>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" FontSize="30" Content="_Yes是" Click="YesButton_Click"/>
+            <Button Grid.Column="1" FontSize="30" Content="_No否" Click="NoButton_Click"/>
+        </Grid>
+    </Grid>
+</Window>

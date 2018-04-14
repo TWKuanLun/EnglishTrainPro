@@ -1,35 +1,28 @@
-﻿using EnglishTrainPro.cs;
+﻿using EnglishTrainPro.DataFactory;
+using EnglishTrainPro.Display;
 using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace EnglishTrainPro
 {
-    /// <summary>
-    /// MainWindow.xaml 的互動邏輯
-    /// </summary>
     public partial class MainWindow : Window
     {
+        private string DebugOrReleasePath = Directory.GetCurrentDirectory();
+        private string Local_OldWord;
         public MainWindow()
         {
             InitializeComponent();
+            DirectoryInfo rootDirectory = new DirectoryInfo($"{DebugOrReleasePath}\\WordData");
+            rootDirectory.Create();//目錄已存在不作用
+            updataList();
+            Local_OldWord = string.Empty;
             
-            var yahooGrid = new Grid();
-            YahooWordGrid test = new YahooWordGrid("architecture", yahooGrid);
-            DictionarySwitch ds = new DictionarySwitch();
-            ds.SetDictionarySwitchTabControl(SearchGrid, yahooGrid, new Grid());
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -63,6 +56,46 @@ namespace EnglishTrainPro
                     break;
             }
         }
+        private void checkWordRemark(string word)
+        {
+            //if (!Local_OldWord.Equals(string.Empty) && !Words[word].remark.Equals(remarkTB.Text))
+            //    if (MessageBox.Show("保存筆記/註解/備忘錄?", "您有做了些修改，是否需要保存?", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            //    {
+            //        seveWordRemark(word, remarkTB.Text);
+            //    }
+        }
+        private void updataList()//更新listbox
+        {
+            Local_WordListBox.Items.Clear();
+            DirectoryInfo dir = new DirectoryInfo($@"{DebugOrReleasePath}\WordData");
+            var searchItem = dir.GetDirectories().Select(x => x.Name).Where(x => x.Contains(Local_SearchTextBox.Text)).OrderByDescending(x => x);
+            foreach (string word in searchItem)
+            {
+                Local_WordListBox.Items.Add(word);
+            }
+            Local_WordListBox.SelectionChanged += Local_WordListBox_SelectionChanged; ;
+        }
+
+        private void Local_WordListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (Local_WordListBox.SelectedValue != null)
+            {
+                checkWordRemark(Local_OldWord);
+                string word = Local_WordListBox.SelectedValue.ToString();
+                Local_OldWord = word;
+                var gridBuilder = new DictionarySwitchTabGrid();
+                gridBuilder.SetDictionarySwitchTabControl(word, Local_WordGrid);
+                //remarkTB.Text = Words[word].remark;
+                //remarkTB.IsEnabled = true;
+            }
+            else
+            {
+                Local_OldWord = string.Empty;
+                Local_WordGrid.Children.Clear();
+                //remarkTB.Text = "";
+                //remarkTB.IsEnabled = false;
+            }
+        }
 
         private void Local_Search_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -70,7 +103,20 @@ namespace EnglishTrainPro
         }
         private void Local_RemoveButton_Click(object sender, RoutedEventArgs e)
         {
+            
+            try
+            {
+                WordBuilder builder = new WordBuilder();
+                builder.RemoveWord(Local_WordListBox.SelectedValue.ToString());
+                updataList();
+                Local_WordListBox.SelectedIndex = 0;
+                Local_OldWord = string.Empty;
+            }
+            catch (Exception e2)
+            {
 
+                MessageBox.Show("錯誤，無選取單字", e2.Message);
+            }
         }
 
         private async void Download_Button_Click(object sender, RoutedEventArgs e)
@@ -112,6 +158,7 @@ namespace EnglishTrainPro
 
             button.Content = "_Download";
             button.IsEnabled = true;
+            updataList();
         }
 
         private void Builder_ProgressChanged(object sender, EventArgs e)

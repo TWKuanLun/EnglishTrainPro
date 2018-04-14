@@ -1,11 +1,12 @@
-﻿using NSoup.Nodes;
+﻿using EnglishTrainPro.DataObject;
+using NSoup.Nodes;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows;
 
-namespace EnglishTrainPro.cs
+namespace EnglishTrainPro.DataFactory
 {
     class YahooDictionaryFactory : WebDictionaryFactory
     {
@@ -48,9 +49,18 @@ namespace EnglishTrainPro.cs
                         foreach (var sentenceElement in sentenceElements)
                         {
                             var sentence = sentenceElement.Text();
-                            var index = sentence.LastIndexOf('.');
-                            var engSentence = sentence.Substring(0, index + 1);
-                            var chiSentence = sentence.Substring(index + 2);
+                            int firstChineseIndex = -1;
+                            for (int j = 0; j < sentence.Length; j++)
+                            {
+                                UnicodeCategory cat = char.GetUnicodeCategory(sentence[j]);
+                                if (cat == UnicodeCategory.OtherLetter)
+                                {
+                                    firstChineseIndex = j;
+                                    break;
+                                }
+                            }
+                            var engSentence = sentence.Substring(0, firstChineseIndex - 1);
+                            var chiSentence = sentence.Substring(firstChineseIndex);
                             sentencesByPos[partOfSpeech][meaning].Add(new Sentence(chiSentence, engSentence));
                         }
                     }
