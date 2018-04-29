@@ -14,14 +14,13 @@ namespace EnglishTrainPro.Display
     class YahooGridBuilder : IWordGrid
     {
         private Grid mainGrid;
-        private string wordStr;
+        private YahooWord word;
         private string DebugOrReleasePath = Directory.GetCurrentDirectory();
         private List<string> sentencePaths;
         private List<string> wordPaths;
-        public YahooGridBuilder(string wordStr, Grid mainGrid, List<string> sentencePaths, List<string> wordPaths)
+        public YahooGridBuilder(Word word, Grid mainGrid, List<string> sentencePaths, List<string> wordPaths)
         {
-            wordStr = wordStr.ToLower();
-            this.wordStr = wordStr;
+            this.word = (YahooWord)word;
             this.mainGrid = mainGrid;
             this.sentencePaths = sentencePaths;
             this.wordPaths = wordPaths;
@@ -35,9 +34,6 @@ namespace EnglishTrainPro.Display
             #region 句子播放按鈕設定
             var sentencePlayer = new SentencePlayer(sentencePaths);
             #endregion
-
-            WebDictionaryFactory yahooFactory = new YahooDictionaryFactory();
-            YahooWord word = (YahooWord)yahooFactory.GetWord(wordStr);
 
             mainGrid.Children.Clear();
             mainGrid.RowDefinitions.Clear();

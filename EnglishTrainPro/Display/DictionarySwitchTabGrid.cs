@@ -1,4 +1,5 @@
 ﻿using EnglishTrainPro.DataFactory;
+using EnglishTrainPro.DataObject;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -9,6 +10,7 @@ namespace EnglishTrainPro.Display
     {
         public void SetDictionarySwitchTabControl(string wordStr, Grid grid)
         {
+            wordStr = wordStr.ToLower();
             var yahooGrid = new Grid();
             var cambridgeGrid = new Grid();
             var helper = new WordHelper();
@@ -16,8 +18,15 @@ namespace EnglishTrainPro.Display
             var cambridgeSentencePaths = new List<string>();
             var wordPaths = new List<string>();
             helper.getMp3Path(wordStr, ref yahooSentencePaths, ref cambridgeSentencePaths, wordPaths);
-            var yahooBuiler = new YahooGridBuilder(wordStr, yahooGrid, yahooSentencePaths, wordPaths);
-            var cambridgeBuiler = new CambridgeGridBuilder(wordStr, cambridgeGrid, cambridgeSentencePaths, wordPaths);
+
+            WebDictionaryFactory dictionaryFactory = new YahooDictionaryFactory();
+            Word yahooWord = dictionaryFactory.GetWord(wordStr);
+            var yahooBuiler = new YahooGridBuilder(yahooWord, yahooGrid, yahooSentencePaths, wordPaths);
+
+            dictionaryFactory = new CambridgeDictionaryFactory();
+            Word cambridgeWord = dictionaryFactory.GetWord(wordStr);
+            var cambridgeBuiler = new CambridgeGridBuilder(cambridgeWord, cambridgeGrid, cambridgeSentencePaths, wordPaths);
+
             yahooBuiler.SetupGrid();
             cambridgeBuiler.SetupGrid();
             var tabControl = new TabControl();
