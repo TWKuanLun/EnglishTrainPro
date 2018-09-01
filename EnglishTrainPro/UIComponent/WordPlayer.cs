@@ -1,9 +1,6 @@
-﻿using System;
+﻿using EnglishTrainPro.DataFactory;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -14,13 +11,12 @@ namespace EnglishTrainPro.UIComponent
     class WordPlayer
     {
         /// <summary>單字發音</summary>
-        private List<WindowsMediaPlayer> WordPlayers = new List<WindowsMediaPlayer>();
+        private List<MediaPlayerHelper> WordPlayers = new List<MediaPlayerHelper>();
         public WordPlayer(List<string> wordPaths, double fontSize, Grid grid, int startInGridColumnNum)
         {
             foreach (var wordPath in wordPaths)
             {
-                WordPlayers.Add(new WindowsMediaPlayer { URL = wordPath });
-                WordPlayers[WordPlayers.Count - 1].controls.stop();
+                WordPlayers.Add(new MediaPlayerHelper(wordPath));
             }
             for (int i = 0; i < WordPlayers.Count; i++)
             {
@@ -50,10 +46,9 @@ namespace EnglishTrainPro.UIComponent
             Button b = (Button)sender;
             foreach (var WordPlayer in WordPlayers)
             {
-                WordPlayer.controls.pause();
+                WordPlayer.Pause();
             }
-            WordPlayers[(int)b.Tag].controls.currentPosition = 0;
-            WordPlayers[(int)b.Tag].controls.play();
+            WordPlayers[(int)b.Tag].PlayFromStart();
         }
     }
 }

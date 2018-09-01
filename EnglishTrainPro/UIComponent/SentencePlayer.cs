@@ -1,8 +1,5 @@
-﻿using System;
+﻿using EnglishTrainPro.DataFactory;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -13,13 +10,12 @@ namespace EnglishTrainPro.UIComponent
     class SentencePlayer
     {
         /// <summary>句子Google發音</summary>
-        private List<WindowsMediaPlayer> SentencePlayers = new List<WindowsMediaPlayer>();
+        private List<MediaPlayerHelper> SentencePlayers = new List<MediaPlayerHelper>();
         public SentencePlayer(List<string> sentencePaths)
         {
             foreach (var sentencePath in sentencePaths)
             {
-                SentencePlayers.Add(new WindowsMediaPlayer { URL = sentencePath });
-                SentencePlayers[SentencePlayers.Count - 1].controls.stop();
+                SentencePlayers.Add(new MediaPlayerHelper(sentencePath));
             }
         }
         public void SetSentenceVoiceButton(int sentenceCount, double fontSize, Grid grid, int index)
@@ -42,10 +38,9 @@ namespace EnglishTrainPro.UIComponent
             Button b = (Button)sender;
             foreach (var SentencePlayer in SentencePlayers)
             {
-                SentencePlayer.controls.pause();
+                SentencePlayer.Pause();
             }
-            SentencePlayers[(int)b.Tag].controls.currentPosition = 0;
-            SentencePlayers[(int)b.Tag].controls.play();
+            SentencePlayers[(int)b.Tag].PlayFromStart();
         }
     }
 }

@@ -35,8 +35,8 @@ namespace EnglishTrainPro
             }
             if (haveWord)
             {
-                var DictionarySwitchTabGrid = new DictionarySwitchTabGrid();
-                DictionarySwitchTabGrid.SetDictionarySwitchTabControl(wordStr, mainGrid);
+                var dictionarySwitchTabGrid = new DictionarySwitchTabGrid();
+                dictionarySwitchTabGrid.SetDictionarySwitchTabControl(wordStr, mainGrid);
             }
             else
             {
@@ -67,7 +67,7 @@ namespace EnglishTrainPro
             Close();
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Windows_Closed(object sender, System.EventArgs e)
         {
             if (!save)
             {
