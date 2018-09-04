@@ -20,11 +20,11 @@ namespace EnglishTrainPro.Display
             helper.getMp3Path(wordStr, ref yahooSentencePaths, ref cambridgeSentencePaths, wordPaths);
 
             WebDictionaryFactory dictionaryFactory = new YahooDictionaryFactory();
-            Word yahooWord = dictionaryFactory.GetWord(wordStr);
+            WebDictionary yahooWord = dictionaryFactory.GetWord(wordStr);
             var yahooBuiler = new YahooGridBuilder(yahooWord, yahooGrid, yahooSentencePaths, wordPaths);
 
             dictionaryFactory = new CambridgeDictionaryFactory();
-            Word cambridgeWord = dictionaryFactory.GetWord(wordStr);
+            WebDictionary cambridgeWord = dictionaryFactory.GetWord(wordStr);
             var cambridgeBuiler = new CambridgeGridBuilder(cambridgeWord, cambridgeGrid, cambridgeSentencePaths, wordPaths);
 
             yahooBuiler.SetupGrid();

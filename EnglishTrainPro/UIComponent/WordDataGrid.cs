@@ -7,7 +7,7 @@ namespace EnglishTrainPro.UIComponent
 {
     class WordDataGrid
     {
-        public WordDataGrid(Word word, double partOfSpeechAndWordPlayerFontSize, double sentenceFontSize, Grid mainGrid, int index, SentencePlayer sentencePlayer)
+        public WordDataGrid(WebDictionary word, double partOfSpeechAndWordPlayerFontSize, double sentenceFontSize, Grid mainGrid, int index, SentencePlayer sentencePlayer)
         {
             mainGrid.RowDefinitions.Add(new RowDefinition());
             mainGrid.RowDefinitions[index].Height = new GridLength(1, GridUnitType.Star);

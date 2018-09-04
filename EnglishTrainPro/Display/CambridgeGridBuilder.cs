@@ -13,15 +13,15 @@ namespace EnglishTrainPro.Display
     class CambridgeGridBuilder : IWordGrid
     {
         private Grid mainGrid;
-        private CambridgeWord word;
+        private CambridgeDictionary word;
 
         private string DebugOrReleasePath = Directory.GetCurrentDirectory();
         private List<string> sentencePaths;
         private List<string> wordPaths;
 
-        public CambridgeGridBuilder(Word word, Grid mainGrid, List<string> sentencePaths, List<string> wordPaths)
+        public CambridgeGridBuilder(WebDictionary word, Grid mainGrid, List<string> sentencePaths, List<string> wordPaths)
         {
-            this.word = (CambridgeWord)word;
+            this.word = (CambridgeDictionary)word;
             this.mainGrid = mainGrid;
             this.sentencePaths = sentencePaths;
             this.wordPaths = wordPaths;

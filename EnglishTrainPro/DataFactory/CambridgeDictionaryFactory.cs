@@ -17,9 +17,9 @@ namespace EnglishTrainPro.DataFactory
             wordStr = wordStr.ToLower();
             return $@"https://dictionary.cambridge.org/zht/%E8%A9%9E%E5%85%B8/%E8%8B%B1%E8%AA%9E-%E6%BC%A2%E8%AA%9E-%E7%B9%81%E9%AB%94/{wordStr}";
         }
-        protected override Word GetWordByHtml(Document htmlDoc, string wordStr)
+        protected override WebDictionary GetWordByHtml(Document htmlDoc, string wordStr)
         {
-            Word word = null;
+            WebDictionary word = null;
             try
             {
                 var meaningsByPos = new Dictionary<string, List<string>>();
@@ -71,7 +71,7 @@ namespace EnglishTrainPro.DataFactory
                         }
                     }
                 }
-                word = new CambridgeWord(wordStr, sentencesByPos, phonetics);
+                word = new CambridgeDictionary(wordStr, sentencesByPos, phonetics);
             }
             catch (Exception e)
             {

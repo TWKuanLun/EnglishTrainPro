@@ -4,9 +4,9 @@ using System.Collections.Generic;
 namespace EnglishTrainPro.DataObject
 {
     [Serializable]
-    class YahooWord : Word
+    class YahooDictionary : WebDictionary
     {
-        public YahooWord(string word, Dictionary<string, Dictionary<string, List<Sentence>>> sentences,
+        public YahooDictionary(string word, Dictionary<string, Dictionary<string, List<Sentence>>> sentences,
             string phoneticSymbol) : base(word, sentences)
         {
             PhoneticSymbol = phoneticSymbol;

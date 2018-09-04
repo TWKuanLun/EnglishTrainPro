@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace EnglishTrainPro.DataObject
 {
     [Serializable]
-    class CambridgeWord : Word
+    class CambridgeDictionary : WebDictionary
     {
-        public CambridgeWord(string word,
+        public CambridgeDictionary(string word,
             Dictionary<string, Dictionary<string, List<Sentence>>> sentences,
             HashSet<string> phoneticSymbol) : base(word, sentences)
         {

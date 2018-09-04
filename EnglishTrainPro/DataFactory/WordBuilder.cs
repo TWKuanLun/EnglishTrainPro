@@ -123,7 +123,7 @@ namespace EnglishTrainPro.DataFactory
                 Task.Run(() => WebDownloadFile(Url.Item2, $@"{DebugOrReleasePath}\WordData\{wordStr}\{Url.Item1}.mp3"));
             }
         }
-        protected void CreateSentencesMp3(Word word, string source)
+        protected void CreateSentencesMp3(WebDictionary word, string source)
         {
             int count = 0;
             foreach (var sentencesByPos in word.Sentences)

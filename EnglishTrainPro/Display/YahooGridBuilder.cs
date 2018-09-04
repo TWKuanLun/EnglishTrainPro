@@ -14,13 +14,13 @@ namespace EnglishTrainPro.Display
     class YahooGridBuilder : IWordGrid
     {
         private Grid mainGrid;
-        private YahooWord word;
+        private YahooDictionary word;
         private string DebugOrReleasePath = Directory.GetCurrentDirectory();
         private List<string> sentencePaths;
         private List<string> wordPaths;
-        public YahooGridBuilder(Word word, Grid mainGrid, List<string> sentencePaths, List<string> wordPaths)
+        public YahooGridBuilder(WebDictionary word, Grid mainGrid, List<string> sentencePaths, List<string> wordPaths)
         {
-            this.word = (YahooWord)word;
+            this.word = (YahooDictionary)word;
             this.mainGrid = mainGrid;
             this.sentencePaths = sentencePaths;
             this.wordPaths = wordPaths;

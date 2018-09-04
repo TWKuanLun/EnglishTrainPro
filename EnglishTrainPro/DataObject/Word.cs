@@ -1,26 +1,26 @@
-﻿using System;
+﻿using EnglishTrainPro.DataFactory;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace EnglishTrainPro.DataObject
 {
-    [Serializable]
-    abstract class Word
+    class Word
     {
-        protected Word(string word,
-            Dictionary<string, Dictionary<string, List<Sentence>>> sentences)
+        private readonly string word;
+        /// <summary>單字權重起始值，數字越大越不熟，0=非常熟，完全不會出現在單字練習。</summary>
+        public int Weight { get; set; }
+        public string Remark { get; set; }
+        public List<WebDictionary> dictionary { get; set; }
+        public Word(string word)
         {
-            this.word = word.ToLower();
-            Sentences = sentences;
+            this.word = word;
             Remark = string.Empty;
             Weight = 3;
+            dictionary = new List<WebDictionary>();
         }
-        protected readonly string word;
-        /// <summary>Key=詞性，Value=(Key=中文意思，Value=句子)</summary>
-        public readonly Dictionary<string, Dictionary<string, List<Sentence>>> Sentences;
-        /// <summary>單字權重起始值，數字越大越不熟，0=非常熟，完全不會出現在單字練習。</summary>
-        protected int Weight { get; set; }
-        /// <summary>備註</summary>
-        protected string Remark { get; set; }
         public override string ToString()
         {
             return word;

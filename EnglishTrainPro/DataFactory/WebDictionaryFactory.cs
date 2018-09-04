@@ -17,7 +17,7 @@ namespace EnglishTrainPro.DataFactory
     abstract class WebDictionaryFactory
     {
         private string DebugOrReleasePath = Directory.GetCurrentDirectory();
-        public Word GetWord(string wordStr)
+        public WebDictionary GetWord(string wordStr)
         {
             var word = GetWordByLocal(wordStr);
             if (word != null)
@@ -40,7 +40,7 @@ namespace EnglishTrainPro.DataFactory
             return true;
         }
         public DictionaryType Type { get; set; }
-        protected void SaveData(string path, Word stuff)
+        protected void SaveData(string path, WebDictionary stuff)
         {
             using (FileStream oFileStream = new FileStream(path, FileMode.Create))
             {
@@ -53,10 +53,10 @@ namespace EnglishTrainPro.DataFactory
                 oFileStream.Dispose();
             }
         }
-        protected Word GetWordByLocal(string wordStr)
+        protected WebDictionary GetWordByLocal(string wordStr)
         {
             wordStr = wordStr.ToLower();
-            Word word = null;
+            WebDictionary word = null;
             try
             {
                 //將檔案還原成原來的物件
@@ -66,13 +66,13 @@ namespace EnglishTrainPro.DataFactory
                     switch (Type)
                     {
                         case DictionaryType.Yahoo:
-                            word = (Word)myBinaryFormatter.Deserialize(oFileStream);
+                            word = (WebDictionary)myBinaryFormatter.Deserialize(oFileStream);
                             break;
                         case DictionaryType.Cambridge:
-                            word = (CambridgeWord)myBinaryFormatter.Deserialize(oFileStream);
+                            word = (CambridgeDictionary)myBinaryFormatter.Deserialize(oFileStream);
                             break;
                         default:
-                            word = (Word)myBinaryFormatter.Deserialize(oFileStream);
+                            word = (WebDictionary)myBinaryFormatter.Deserialize(oFileStream);
                             break;
                     }
                 }
@@ -94,6 +94,6 @@ namespace EnglishTrainPro.DataFactory
             return htmlSourceCode;
         }
         protected abstract string GetWordURL(string wordStr);
-        protected abstract Word GetWordByHtml(Document htmlDoc, string wordStr);
+        protected abstract WebDictionary GetWordByHtml(Document htmlDoc, string wordStr);
     }
 }

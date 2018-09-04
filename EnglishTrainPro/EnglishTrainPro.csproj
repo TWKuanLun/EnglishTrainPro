@@ -59,8 +59,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DataFactory\MediaPlayerHelper.cs" />
-    <Compile Include="DataObject\CambridgeWord.cs" />
-    <Compile Include="DataObject\YahooWord.cs" />
+    <Compile Include="DataObject\CambridgeDictionary.cs" />
+    <Compile Include="DataObject\Word.cs" />
+    <Compile Include="DataObject\YahooDictionary.cs" />
     <Compile Include="UIComponent\GridLabel.cs" />
     <Compile Include="UIComponent\SentencePlayer.cs" />
     <Compile Include="UIComponent\WordButton.cs" />
@@ -83,7 +84,7 @@
     <Compile Include="Display\DictionarySwitchTabGrid.cs" />
     <Compile Include="DataObject\Sentence.cs" />
     <Compile Include="DataFactory\WebDictionaryFactory.cs" />
-    <Compile Include="DataObject\Word.cs" />
+    <Compile Include="DataObject\WebDictionary.cs" />
     <Compile Include="DataFactory\WordBuilder.cs" />
     <Compile Include="Display\IWordGrid.cs" />
     <Compile Include="DataFactory\WordHelper.cs" />

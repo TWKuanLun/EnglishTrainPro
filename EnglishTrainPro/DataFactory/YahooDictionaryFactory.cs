@@ -18,9 +18,9 @@ namespace EnglishTrainPro.DataFactory
         {
             return $@"https://tw.dictionary.search.yahoo.com/search?p={wordStr}&fr2=dict";
         }
-        protected override Word GetWordByHtml(Document htmlDoc, string wordStr)
+        protected override WebDictionary GetWordByHtml(Document htmlDoc, string wordStr)
         {
-            Word word = null;
+            WebDictionary word = null;
             try
             {
                 var allBlock = htmlDoc.GetElementsByTag("ol").First(x => x.Attr("class") == "mb-15 reg searchCenterMiddle");
@@ -71,7 +71,7 @@ namespace EnglishTrainPro.DataFactory
                         sentencesByPos[partOfSpeech] = new Dictionary<string, List<Sentence>>();
                     }
                 }
-                word = new YahooWord(wordStr, sentencesByPos, phonetic);
+                word = new YahooDictionary(wordStr, sentencesByPos, phonetic);
             }
             catch (Exception e)
             {
