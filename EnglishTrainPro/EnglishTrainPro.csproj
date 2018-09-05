@@ -34,8 +34,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NSoup">
-      <HintPath>..\NSoup.dll</HintPath>
+    <Reference Include="NSoup.Standard, Version=2.0.0.1, Culture=neutral, PublicKeyToken=c28d5e68e3f0d5eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NSoup.Standard.2.0.1\lib\netstandard2.0\NSoup.Standard.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -116,6 +116,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
