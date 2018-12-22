@@ -3,7 +3,11 @@ using EnglishTrainPro.Display;
 using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -22,7 +26,14 @@ namespace EnglishTrainPro
             rootDirectory.Create();//目錄已存在不作用
             updataList();
             Local_OldWord = string.Empty;
-            
+
+            WordBuilder.Instance().LocalDataChanged += MainWindow_LocalDataChanged;
+            Local_WordListBox.SelectionChanged += Local_WordListBox_SelectionChanged;
+        }
+        #region Window event
+        private void MainWindow_LocalDataChanged(object sender, EventArgs e)
+        {
+            updataList();
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -56,14 +67,9 @@ namespace EnglishTrainPro
                     break;
             }
         }
-        private void checkWordRemark(string word)
-        {
-            //if (!Local_OldWord.Equals(string.Empty) && !Words[word].remark.Equals(remarkTB.Text))
-            //    if (MessageBox.Show("保存筆記/註解/備忘錄?", "您有做了些修改，是否需要保存?", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
-            //    {
-            //        seveWordRemark(word, remarkTB.Text);
-            //    }
-        }
+        #endregion
+
+        #region Window Function
         private void updataList()//更新listbox
         {
             Local_WordListBox.Items.Clear();
@@ -73,9 +79,10 @@ namespace EnglishTrainPro
             {
                 Local_WordListBox.Items.Add(word);
             }
-            Local_WordListBox.SelectionChanged += Local_WordListBox_SelectionChanged; ;
         }
+        #endregion
 
+        #region 單字庫
         private void Local_WordListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (Local_WordListBox.SelectedValue != null)
@@ -99,14 +106,14 @@ namespace EnglishTrainPro
 
         private void Local_Search_TextChanged(object sender, TextChangedEventArgs e)
         {
-
+            updataList();
         }
         private void Local_RemoveButton_Click(object sender, RoutedEventArgs e)
         {
             
             try
             {
-                WordBuilder builder = new WordBuilder();
+                var builder = WordBuilder.Instance();
                 builder.RemoveWord(Local_WordListBox.SelectedValue.ToString());
                 updataList();
                 Local_WordListBox.SelectedIndex = 0;
@@ -119,19 +126,30 @@ namespace EnglishTrainPro
             }
         }
 
+        private void checkWordRemark(string word)
+        {
+            //if (!Local_OldWord.Equals(string.Empty) && !Words[word].remark.Equals(remarkTB.Text))
+            //    if (MessageBox.Show("保存筆記/註解/備忘錄?", "您有做了些修改，是否需要保存?", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            //    {
+            //        seveWordRemark(word, remarkTB.Text);
+            //    }
+        }
+        #endregion
+
+        #region 新增單字
         private async void Download_Button_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             button.Content = "Downloading, please wait!";
             button.IsEnabled = false;
 
-            var builder = new WordBuilder();
+            var builder = WordBuilder.Instance();
             builder.ProgressChanged += Builder_ProgressChanged;
             string[] words = Download_TextBox.Text.Split(new char[] { '\n' }); //TextBox文字以\n劃分各單字
             words = words.Select(x => x.Replace("\r","")).Where(x => x != string.Empty).ToArray();
             var message = new StringBuilder();
             var newText = new StringBuilder(); //讓成功新增的單字在Textbox上除去
-            var addResult = await builder.TaskCreateWords(words);
+            var addResult = await Task.Factory.StartNew(() => builder.CreateWords(words));
             for (int i = 0; i < words.Length; i++)
             {
                 switch (addResult[i])
@@ -160,21 +178,38 @@ namespace EnglishTrainPro
             button.IsEnabled = true;
             updataList();
         }
-
         private void Builder_ProgressChanged(object sender, EventArgs e)
         {
             var builder = sender as WordBuilder;
             pbStatus.Dispatcher.Invoke(() => pbStatus.Value = builder.Progress, DispatcherPriority.Background);
         }
+        #endregion
 
+        #region 單字查詢
         private void Search_TextBox_KeyDown(object sender, KeyEventArgs e)
         {
-
+            if (e.Key == Key.Return)
+            {
+                var word = Search_TextBox.Text;
+                word = Regex.Replace(word, "[.,']", "", RegexOptions.IgnoreCase).ToLower();
+                var helper = new WordHelper();
+                word = helper.getVerbRoot(word);
+                word = helper.getSingularNoun(word);
+                var gridBuilder = new DictionarySwitchTabGrid();
+                gridBuilder.SetDictionarySwitchTabControl(word, SearchGrid);
+            }
         }
 
         private void Search_Button_Click(object sender, RoutedEventArgs e)
         {
-
+            var word = Search_TextBox.Text;
+            word = Regex.Replace(word, "[.,']", "", RegexOptions.IgnoreCase).ToLower();
+            var helper = new WordHelper();
+            word = helper.getVerbRoot(word);
+            word = helper.getSingularNoun(word);
+            var gridBuilder = new DictionarySwitchTabGrid();
+            gridBuilder.SetDictionarySwitchTabControl(word, SearchGrid);
         }
+        #endregion
     }
 }

@@ -17,8 +17,8 @@ namespace EnglishTrainPro.Display
         private YahooDictionary word;
         private string DebugOrReleasePath = Directory.GetCurrentDirectory();
         private List<string> sentencePaths;
-        private List<string> wordPaths;
-        public YahooGridBuilder(WebDictionary word, Grid mainGrid, List<string> sentencePaths, List<string> wordPaths)
+        private (string Source, string URL)[] wordPaths;
+        public YahooGridBuilder(WebDictionary word, Grid mainGrid, List<string> sentencePaths, (string Source, string URL)[] wordPaths)
         {
             this.word = (YahooDictionary)word;
             this.mainGrid = mainGrid;

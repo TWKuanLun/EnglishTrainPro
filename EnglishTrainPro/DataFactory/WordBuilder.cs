@@ -1,9 +1,13 @@
 ﻿using EnglishTrainPro.DataObject;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using static EnglishTrainPro.IO.Serialization;
+using static EnglishTrainPro.IO.Download;
+using System.Windows;
 
 namespace EnglishTrainPro.DataFactory
 {
@@ -13,10 +17,21 @@ namespace EnglishTrainPro.DataFactory
     }
     class WordBuilder
     {
-        WordHelper helper = new WordHelper();
+        private static WordBuilder singleton;
+        protected WordBuilder()
+        {
+        }
+        public static WordBuilder Instance()
+        {
+            if (singleton == null)
+                singleton = new WordBuilder();
+            return singleton;
+        }
+        private WordHelper helper = new WordHelper();
 
-        private string DebugOrReleasePath = Directory.GetCurrentDirectory();
+        private string PublishPath = Directory.GetCurrentDirectory();
         public event EventHandler ProgressChanged;
+        public event EventHandler LocalDataChanged;
         private int _progress;
         public int Progress
         {
@@ -31,101 +46,36 @@ namespace EnglishTrainPro.DataFactory
         {
             ProgressChanged?.Invoke(this, e);
         }
-        public AddResult CreateWord(string wordStr)
+        protected virtual void OnLocalDataChanged(EventArgs e)
         {
-            wordStr = helper.getVerbRoot(wordStr);
-            wordStr = helper.getSingularNoun(wordStr);
-            
-            wordStr = wordStr.ToLower();
-            DirectoryInfo rootDirectory = new DirectoryInfo($"{DebugOrReleasePath}\\WordData");
-            rootDirectory.Create();//目錄已存在不作用
-            DirectoryInfo[] subDirectories = rootDirectory.GetDirectories();
-            DirectoryInfo wordDirectory = new DirectoryInfo($@"{DebugOrReleasePath}\WordData\{wordStr}");
-            var findWord = subDirectories.Where(x => x.Name == wordStr).SingleOrDefault();
-            if (findWord != null)//已有此單字
-                return AddResult.HaveWord;
-            var cambridgeFactory = new CambridgeDictionaryFactory();
-            var yahooFactory = new YahooDictionaryFactory();
-            var tCambridge = Task.Run(() => cambridgeFactory.CreateWordData(wordStr, wordDirectory));
-            var tYahoo = Task.Run(() => yahooFactory.CreateWordData(wordStr, wordDirectory));
-            tCambridge.Wait();
-            tYahoo.Wait();
-            if (!tCambridge.Result && !tYahoo.Result)
-                return AddResult.SearchFail;
-            DownloadWordMp3(wordStr);
-            if (tYahoo.Result)
-            {
-                var yahooWord = yahooFactory.GetWord(wordStr);
-                CreateSentencesMp3(yahooWord, yahooFactory.Type.ToString());
-            }
-            if (tCambridge.Result)
-            {
-                var cambridgeWord = cambridgeFactory.GetWord(wordStr);
-                CreateSentencesMp3(cambridgeWord, cambridgeFactory.Type.ToString());
-            }
-            return AddResult.Success;
+            LocalDataChanged?.Invoke(this, e);
         }
-        private AddResult[] CreateWords(string[] wordStrs)
+        public (string Name, string URL)[] WordMediaURL(string wordStr)
         {
-            var result = new AddResult[wordStrs.Length];
-            Progress = 0;
-            for(int i = 0; i < wordStrs.Length; i++)
+            return new (string Name, string URL)[]
             {
-                result[i] = CreateWord(wordStrs[i]);
-                Progress = 100 * (i + 1) / wordStrs.Length;
-            }
-            //防止被檔IP
-            Task.Delay(new Random(new Guid().GetHashCode()).Next(5000));
-            return result;
-        }
-        public Task<AddResult[]> TaskCreateWords(string[] wordStrs)
-        {
-            return Task.Factory.StartNew(() => CreateWords(wordStrs));
-        }
-        private bool WebDownloadFile(string source, string destination)
-        {
-            bool success = true;
-            using (WebClient client = new WebClient())
-            {
-                client.Headers.Add("User-Agent: Other");
-                try
-                {
-                    client.DownloadFile(new Uri(source), destination);
-                }
-                catch (Exception)
-                {
-                    success = false;
-                }
-            }
-            return success;
-        }
-        private void DownloadWordMp3(string wordStr)
-        {
-            var googleURL = $"https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q={wordStr}";
-            var voiceTubeURL = $"https://tw.voicetube.com/player/{wordStr}.mp3";
-            var yahooURL = new Tuple<string, string>[]
-            {
-                new Tuple<string, string>("yahooNormal",$"https://s.yimg.com/tn/dict/dreye/live/f/{wordStr}.mp3"),
-                new Tuple<string, string>("yahooNormal2",$"https://s.yimg.com/tn/dict/dreye/live/f/{wordStr}@2.mp3"),
-                new Tuple<string, string>("yahooNormal3",$"https://s.yimg.com/tn/dict/dreye/live/f/{wordStr}@3.mp3"),
-                new Tuple<string, string>("yahooUS1",$"https://s.yimg.com/tn/dict/ox/mp3/v1/{wordStr}@_us_1.mp3"),
-                new Tuple<string, string>("yahooUS2",$"https://s.yimg.com/tn/dict/ox/mp3/v1/{wordStr}@_us_2.mp3"),
-                new Tuple<string, string>("yahooUS3",$"https://s.yimg.com/tn/dict/ox/mp3/v1/{wordStr}@_us_3.mp3"),
-                new Tuple<string, string>("yahooGB1",$"https://s.yimg.com/tn/dict/ox/mp3/v1/{wordStr}@_gb_1.mp3"),
-                new Tuple<string, string>("yahooGB2",$"https://s.yimg.com/tn/dict/ox/mp3/v1/{wordStr}@_gb_2.mp3"),
-                new Tuple<string, string>("yahooGB3",$"https://s.yimg.com/tn/dict/ox/mp3/v1/{wordStr}@_gb_3.mp3")
+                ("Google", $"https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q={wordStr}"),
+                ("VoiceTube", $"https://tw.voicetube.com/player/{wordStr}.mp3"),
+                ("YahooNormal", $"https://s.yimg.com/bg/dict/dreye/live/f/{wordStr}.mp3"),
+                ("YahooNormal2", $"https://s.yimg.com/bg/dict/dreye/live/f/{wordStr}@2.mp3"),
+                ("YahooNormal3", $"https://s.yimg.com/bg/dict/dreye/live/f/{wordStr}@3.mp3"),
+                ("YahooUS1", $"https://s.yimg.com/bg/dict/ox/mp3/v1/{wordStr}@_us_1.mp3"),
+                ("YahooUS2", $"https://s.yimg.com/bg/dict/ox/mp3/v1/{wordStr}@_us_2.mp3"),
+                ("YahooUS3", $"https://s.yimg.com/bg/dict/ox/mp3/v1/{wordStr}@_us_3.mp3"),
+                ("YahooGB1", $"https://s.yimg.com/bg/dict/ox/mp3/v1/{wordStr}@_gb_1.mp3"),
+                ("YahooGB2", $"https://s.yimg.com/bg/dict/ox/mp3/v1/{wordStr}@_gb_2.mp3"),
+                ("YahooGB3", $"https://s.yimg.com/bg/dict/ox/mp3/v1/{wordStr}@_gb_3.mp3")
             };
-            Task.Run(() => WebDownloadFile(googleURL, $@"{DebugOrReleasePath}\WordData\{wordStr}\google.mp3"));
-            Task.Run(() => WebDownloadFile(voiceTubeURL, $@"{DebugOrReleasePath}\WordData\{wordStr}\voiceTube.mp3"));
-            
-            foreach (var Url in yahooURL)
-            {
-                Task.Run(() => WebDownloadFile(Url.Item2, $@"{DebugOrReleasePath}\WordData\{wordStr}\{Url.Item1}.mp3"));
-            }
         }
-        protected void CreateSentencesMp3(WebDictionary word, string source)
+        public (string Name, string URL)[] LocalWordMediaPath(string wordStr)
         {
-            int count = 0;
+            var wordDirectory = new DirectoryInfo($@"{PublishPath}\WordData\{wordStr}");
+            return wordDirectory.EnumerateFiles("*.mp3").Where(x => !x.Name.Contains("Sentence"))
+                .Select(x => (Name: x.Name.Replace(".mp3",""), URL: x.FullName)).ToArray();
+        }
+        public List<string> SentencesMediaURL(WebDictionary word)
+        {
+            var list = new List<string>();
             foreach (var sentencesByPos in word.Sentences)
             {
                 foreach (var sentencesByMeaning in sentencesByPos.Value)
@@ -133,17 +83,139 @@ namespace EnglishTrainPro.DataFactory
                     foreach (var sentence in sentencesByMeaning.Value)
                     {
                         var sentenceURL = $"https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q={sentence.GetEnglishSentence()}";
-                        if (WebDownloadFile(sentenceURL, DebugOrReleasePath + "\\WordData\\" + word.ToString() + "\\" + source + "Sentence" + count + ".mp3"))
-                        {
-                            count++;
-                        }
+                        list.Add(sentenceURL);
                     }
                 }
+            }
+            return list;
+        }
+        public List<string> LocalSentencesMediaPath(WebDictionary word)
+        {
+            var list = new List<string>();
+            var count = 0;
+            foreach (var sentencesByPos in word.Sentences)
+            {
+                foreach (var sentencesByMeaning in sentencesByPos.Value)
+                {
+                    foreach (var sentence in sentencesByMeaning.Value)
+                    {
+                        //var sentenceURL = $"https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q={sentence.GetEnglishSentence()}";
+                        list.Add($@"{PublishPath}\WordData\{word.ToString()}\{word.Type.ToString()}Sentence{count.ToString()}.mp3");
+                        count++;
+                    }
+                }
+            }
+            return list;
+        }
+        public void DownloadWordMp3(string wordStr)
+        {
+            var medias = WordMediaURL(wordStr);
+            Task[] tasks = new Task[medias.Length];
+
+            for(int i= 0; i < tasks.Length; i++)
+            {
+                //https://stackoverflow.com/questions/25173722/indexoutofrangeexception-exception-when-using-tasks-in-for-loop-in-c-sharp
+                var currentIndex = i;
+                tasks[i] = Task.Factory.StartNew(() => WebDownloadFile(medias[currentIndex].URL, $@"{PublishPath}\WordData\{wordStr}\{medias[currentIndex].Name}.mp3"));
+            }
+            try
+            {
+                Task.WaitAll(tasks);
+            }
+            catch (AggregateException e)
+            {
+                MessageBox.Show($"Error: {e.ToString()}");
+            }
+        }
+        protected void CreateSentencesMp3(WebDictionary word)
+        {
+            var webURLs = SentencesMediaURL(word);
+            for(int i = 0; i < webURLs.Count; i++)
+            {
+                var index = i;
+                Task.Run(() => WebDownloadFile(webURLs[index], $@"{PublishPath}\WordData\{word.ToString()}\{word.Type.ToString()}Sentence{index}.mp3"));
             }
         }
         public void RemoveWord(string wordStr)
         {
-            Directory.Delete($@"{DebugOrReleasePath}\WordData\{wordStr}", true);
+            Directory.Delete($@"{PublishPath}\WordData\{wordStr}", true);
+            OnLocalDataChanged(new EventArgs());
         }
+
+        private bool CreateWordData(string wordStr, DirectoryInfo path)
+        {
+            var word = GetWordByWeb(wordStr);
+            if (word == null)
+                return false;
+            foreach(var dictionary in word.dictionary)
+            {
+                CreateSentencesMp3(dictionary);
+            }
+            SaveObject($@"{path.FullName}\Word.txt", word);
+            DownloadWordMp3(wordStr);
+            return true;
+        }
+        private Word GetWordByWeb(string wordStr)
+        {
+            var yahooFactory = new YahooDictionaryFactory();
+            var yahooWord = yahooFactory.GetDictionaryByHtml(wordStr);
+            var cambridgeFactory = new CambridgeDictionaryFactory();
+            var cambridgeWord = cambridgeFactory.GetDictionaryByHtml(wordStr);
+            if (yahooWord == null && cambridgeWord == null)
+                return null;
+            Word word = new Word(wordStr);
+            if (yahooWord != null)
+            {
+                word.dictionary.Add(yahooWord);
+            }
+            if (cambridgeWord != null)
+            {
+                word.dictionary.Add(cambridgeWord);
+            }
+            return word;
+        }
+        public Word GetWord(string wordStr)
+        {
+            wordStr = wordStr.ToLower();
+            var word = LoadObject<Word>($@"{PublishPath}\WordData\{wordStr}\Word.txt");
+            if (word == null)
+                word = GetWordByWeb(wordStr);
+            return word;
+        }
+        public AddResult CreateWord(string wordStr)
+        {
+            wordStr = helper.getVerbRoot(wordStr);
+            wordStr = helper.getSingularNoun(wordStr);
+
+            wordStr = wordStr.ToLower();
+            DirectoryInfo rootDirectory = new DirectoryInfo($"{PublishPath}\\WordData");
+            rootDirectory.Create();//目錄已存在不作用
+            DirectoryInfo[] subDirectories = rootDirectory.GetDirectories();
+            DirectoryInfo wordDirectory = new DirectoryInfo($@"{PublishPath}\WordData\{wordStr}");
+            var findWord = subDirectories.Where(x => x.Name == wordStr).SingleOrDefault();
+            if (findWord != null)//已有此單字
+                return AddResult.HaveWord;
+            wordDirectory.Create();
+            var succeed = CreateWordData(wordStr, wordDirectory);
+            if (!succeed)
+                return AddResult.SearchFail;
+            OnLocalDataChanged(new EventArgs());
+            return AddResult.Success;
+        }
+        public AddResult[] CreateWords(string[] wordStrs)
+        {
+            var result = new AddResult[wordStrs.Length];
+            Progress = 0;
+            for (int i = 0; i < wordStrs.Length; i++)
+            {
+                result[i] = CreateWord(wordStrs[i]);
+                Progress = 100 * (i + 1) / wordStrs.Length;
+                //防止被檔IP
+                Task.Delay(new Random(new Guid().GetHashCode()).Next(5000));
+            }
+            OnLocalDataChanged(new EventArgs());
+            return result;
+        }
+        
     }
 }

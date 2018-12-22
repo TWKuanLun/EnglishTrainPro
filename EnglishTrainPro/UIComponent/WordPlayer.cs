@@ -12,23 +12,22 @@ namespace EnglishTrainPro.UIComponent
     {
         /// <summary>單字發音</summary>
         private List<MediaPlayerHelper> WordPlayers = new List<MediaPlayerHelper>();
-        public WordPlayer(List<string> wordPaths, double fontSize, Grid grid, int startInGridColumnNum)
+        public WordPlayer((string Source, string URL)[] wordPaths, double fontSize, Grid grid, int startInGridColumnNum)
         {
             foreach (var wordPath in wordPaths)
             {
-                WordPlayers.Add(new MediaPlayerHelper(wordPath));
+                WordPlayers.Add(new MediaPlayerHelper(wordPath.URL));
             }
             for (int i = 0; i < WordPlayers.Count; i++)
             {
                 grid.ColumnDefinitions.Add(new ColumnDefinition());
                 grid.ColumnDefinitions[i + startInGridColumnNum].Width = new GridLength(0, GridUnitType.Auto);
                 Button button = new Button();
-                var index = wordPaths[i].LastIndexOf("\\");
-                var fileName = wordPaths[i].Substring(index + 1);
+                var fileName = wordPaths[i].Source;
                 StringBuilder sb = new StringBuilder(fileName);
                 sb[0] = fileName.ToUpper()[0];
-                var name = sb.ToString(0, fileName.Length - 4);
-                if (name.Substring(0, 5) != "Yahoo")
+                var name = sb.ToString();
+                if (!name.Contains("Yahoo"))
                     name = "_" + name;
                 button.Tag = i;
                 button.Content = name;

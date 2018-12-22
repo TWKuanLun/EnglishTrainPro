@@ -1,4 +1,5 @@
 ﻿using EnglishTrainPro.DataObject;
+using NSoup;
 using NSoup.Nodes;
 using System;
 using System.Collections.Generic;
@@ -10,18 +11,19 @@ namespace EnglishTrainPro.DataFactory
     {
         public CambridgeDictionaryFactory()
         {
-            Type = DictionaryType.Cambridge;
         }
-        protected override string GetWordURL(string wordStr)
+        protected override string GetDictionaryURL(string wordStr)
         {
             wordStr = wordStr.ToLower();
             return $@"https://dictionary.cambridge.org/zht/%E8%A9%9E%E5%85%B8/%E8%8B%B1%E8%AA%9E-%E6%BC%A2%E8%AA%9E-%E7%B9%81%E9%AB%94/{wordStr}";
         }
-        protected override WebDictionary GetWordByHtml(Document htmlDoc, string wordStr)
+        public override WebDictionary GetDictionaryByHtml(string wordStr)
         {
             WebDictionary word = null;
             try
             {
+                var htmlStr = GetHtml(GetDictionaryURL(wordStr));
+                Document htmlDoc = NSoupClient.Parse(htmlStr);
                 var meaningsByPos = new Dictionary<string, List<string>>();
                 var sentencesByPos = new Dictionary<string, Dictionary<string, List<Sentence>>>();
                 var POS_Blocks = htmlDoc.GetElementsByTag("div").Where(x => x.Attr("class") == "entry-body__el clrd js-share-holder").ToArray();

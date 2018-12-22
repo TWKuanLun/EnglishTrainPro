@@ -2,6 +2,9 @@
 
 namespace EnglishTrainPro.DataFactory
 {
+    /// <summary>
+    /// 為了解決WindowsMediaPlayer部分Bug的Class
+    /// </summary>
     class MediaPlayerHelper
     {
         private WindowsMediaPlayer player;
@@ -9,36 +12,49 @@ namespace EnglishTrainPro.DataFactory
         public MediaPlayerHelper(string url)
         {
             URL = url;
-            player = new WindowsMediaPlayer();
         }
         public void Pause()
         {
-            checkPlayerInit();
-            player.controls.pause();
+            if (player != null)
+            {
+                player.controls.pause();
+            }
         }
         public void PlayFromStart()
         {
-            checkPlayerInit();
-            player.controls.currentPosition = 0;
-            player.controls.play();
+            if (player == null)
+            {
+                player = new WindowsMediaPlayer();
+                player.URL = URL;
+            }
+            else
+            {
+                player.controls.currentPosition = 0;
+                player.controls.play();
+            }
         }
         public void Play()
         {
-            checkPlayerInit();
-            player.controls.play();
+            if (player == null)
+            {
+                player = new WindowsMediaPlayer();
+                player.URL = URL;
+            }
+            else
+            {
+                player.controls.play();
+            }
         }
         public void Stop()
         {
-            checkPlayerInit();
-            player.controls.stop();
-        }
-        private void checkPlayerInit()
-        {
-            if (string.IsNullOrEmpty(player.URL))
+            if(player != null)
             {
-                player.URL = URL;
                 player.controls.stop();
             }
+        }
+        ~MediaPlayerHelper()
+        {
+            player = null;
         }
     }
 }

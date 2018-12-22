@@ -36,11 +36,18 @@ namespace EnglishTrainPro.UIComponent
         private void SentenceVoiceButton_Click(object sender, RoutedEventArgs e)
         {
             Button b = (Button)sender;
-            foreach (var SentencePlayer in SentencePlayers)
+            int clickIndex = (int)b.Tag;
+            for (int i = 0; i < SentencePlayers.Count; i++)
             {
-                SentencePlayer.Pause();
+                if (i == clickIndex)
+                {
+                    SentencePlayers[i].PlayFromStart();
+                }
+                else
+                {
+                    SentencePlayers[i].Pause();
+                }
             }
-            SentencePlayers[(int)b.Tag].PlayFromStart();
         }
     }
 }

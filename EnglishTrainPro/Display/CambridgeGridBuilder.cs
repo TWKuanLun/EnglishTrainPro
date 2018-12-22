@@ -17,9 +17,9 @@ namespace EnglishTrainPro.Display
 
         private string DebugOrReleasePath = Directory.GetCurrentDirectory();
         private List<string> sentencePaths;
-        private List<string> wordPaths;
+        private (string Source, string URL)[] wordPaths;
 
-        public CambridgeGridBuilder(WebDictionary word, Grid mainGrid, List<string> sentencePaths, List<string> wordPaths)
+        public CambridgeGridBuilder(WebDictionary word, Grid mainGrid, List<string> sentencePaths, (string Source, string URL)[] wordPaths)
         {
             this.word = (CambridgeDictionary)word;
             this.mainGrid = mainGrid;

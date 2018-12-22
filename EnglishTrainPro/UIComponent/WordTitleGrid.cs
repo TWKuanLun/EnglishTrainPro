@@ -7,7 +7,7 @@ namespace EnglishTrainPro.UIComponent
 {
     class WordTitleGrid
     {
-        public WordTitleGrid(string word, double wordFontSize, double partOfSpeechAndWordPlayerFontSize, List<string> wordPaths, Grid mainGrid, int index)
+        public WordTitleGrid(string word, double wordFontSize, double partOfSpeechAndWordPlayerFontSize, (string Source, string URL)[] wordPaths, Grid mainGrid, int index)
         {
             mainGrid.RowDefinitions.Add(new RowDefinition());
             mainGrid.RowDefinitions[index].Height = new GridLength(0, GridUnitType.Auto);

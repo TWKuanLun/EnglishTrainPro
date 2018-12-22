@@ -10,6 +10,7 @@ namespace EnglishTrainPro.DataObject
             string phoneticSymbol) : base(word, sentences)
         {
             PhoneticSymbol = phoneticSymbol;
+            Type = DictionaryType.Yahoo;
         }
         /// <summary>音標</summary>
         public readonly string PhoneticSymbol;

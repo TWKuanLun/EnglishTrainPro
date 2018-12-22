@@ -1,4 +1,5 @@
 ﻿using EnglishTrainPro.DataObject;
+using NSoup;
 using NSoup.Nodes;
 using System;
 using System.Collections.Generic;
@@ -12,17 +13,18 @@ namespace EnglishTrainPro.DataFactory
     {
         public YahooDictionaryFactory()
         {
-            Type = DictionaryType.Yahoo;
         }
-        protected override string GetWordURL(string wordStr)
+        protected override string GetDictionaryURL(string wordStr)
         {
             return $@"https://tw.dictionary.search.yahoo.com/search?p={wordStr}&fr2=dict";
         }
-        protected override WebDictionary GetWordByHtml(Document htmlDoc, string wordStr)
+        public override WebDictionary GetDictionaryByHtml(string wordStr)
         {
             WebDictionary word = null;
             try
             {
+                var htmlStr = GetHtml(GetDictionaryURL(wordStr));
+                Document htmlDoc = NSoupClient.Parse(htmlStr);
                 var allBlock = htmlDoc.GetElementsByTag("ol").First(x => x.Attr("class") == "mb-15 reg searchCenterMiddle");
                 var meaningBlock = allBlock.GetElementsByTag("div").First(x => x.Attr("class") == "grp grp-tab-content-explanation tabsContent tab-content-explanation tabActived");
 

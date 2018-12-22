@@ -5,14 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EnglishTrainPro"
         mc:Ignorable="d" Background="Black"
-        Title="單字解釋" Closed="Windows_Closed" Height="702" Width="900">
+        Title="單字解釋" Closed="Windows_Closed" Height="702" Width="900" ContentRendered="Content_Rendered">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="12*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Name="mainGrid"/>
+        <Grid Grid.Row="0" Name="mainGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="403*"/>
+                <ColumnDefinition Width="43*"/>
+            </Grid.ColumnDefinitions>
+        </Grid>
 
         <Label Grid.Row="1" Background="RosyBrown" Content="下載此單字" FontSize="30" HorizontalContentAlignment="Center"/>
 

@@ -14,6 +14,7 @@ namespace EnglishTrainPro.DataObject
             HashSet<string> phoneticSymbol) : base(word, sentences)
         {
             PhoneticSymbol = phoneticSymbol;
+            Type = DictionaryType.Cambridge;
         }
         /// <summary>音標</summary>
         public readonly HashSet<string> PhoneticSymbol;

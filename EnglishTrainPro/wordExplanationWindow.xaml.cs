@@ -1,5 +1,6 @@
 ﻿using EnglishTrainPro.DataFactory;
 using EnglishTrainPro.Display;
+using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -11,9 +12,9 @@ namespace EnglishTrainPro
     /// </summary>
     public partial class wordExplanationWindow : Window
     {
-        private string DebugOrReleasePath = Directory.GetCurrentDirectory();
+        private string PublishPath = Directory.GetCurrentDirectory();
         private string wordStr;
-        private bool save = false;
+        bool shown;
         public wordExplanationWindow(string wordStr)
         {
             InitializeComponent();
@@ -26,54 +27,42 @@ namespace EnglishTrainPro
             wordStr = helper.getSingularNoun(wordStr);
             this.wordStr = wordStr;
 
-            DirectoryInfo dir = new DirectoryInfo($@"{DebugOrReleasePath}\WordData");
-            bool haveWord = false;
-            foreach (var subDir in dir.GetDirectories())
-            {
-                if (subDir.Name == wordStr)
-                    haveWord = true;
-            }
-            if (haveWord)
-            {
-                var dictionarySwitchTabGrid = new DictionarySwitchTabGrid();
-                dictionarySwitchTabGrid.SetDictionarySwitchTabControl(wordStr, mainGrid);
-            }
-            else
-            {
-                WordBuilder builder = new WordBuilder();
-                AddResult status = builder.CreateWord(wordStr);
-                if (status == AddResult.SearchFail)
-                {
-                    MessageBox.Show($"Yahoo查無此單字：{wordStr}\n");
-                    Close();
-                }
-                else
-                {
-                    var DictionarySwitchTabGrid = new DictionarySwitchTabGrid();
-                    DictionarySwitchTabGrid.SetDictionarySwitchTabControl(wordStr, mainGrid);
-                }
-            }
+            var dictionarySwitchTabGrid = new DictionarySwitchTabGrid();
+            shown = dictionarySwitchTabGrid.SetDictionarySwitchTabControl(wordStr, mainGrid);
+        }
+
+        protected override void OnContentRendered(System.EventArgs e)
+        {
+            if (!shown)
+                Close();
+            base.OnContentRendered(e);
         }
 
         private void YesButton_Click(object sender, RoutedEventArgs e)
         {
-            save = true;
-            Close();
+            var builder = WordBuilder.Instance();
+            AddResult status = builder.CreateWord(wordStr);
+            if (status == AddResult.SearchFail)
+            {
+                MessageBox.Show($"{wordStr}新增失敗，請再試一次。");
+            }
+            else
+            {
+                Close();
+            }
         }
         private void NoButton_Click(object sender, RoutedEventArgs e)
         {
-            WordBuilder builder = new WordBuilder();
-            builder.RemoveWord(wordStr);
             Close();
         }
 
         private void Windows_Closed(object sender, System.EventArgs e)
         {
-            if (!save)
-            {
-                WordBuilder builder = new WordBuilder();
-                builder.RemoveWord(wordStr);
-            }
+        }
+
+        private void Content_Rendered(object sender, System.EventArgs e)
+        {
+
         }
     }
 }

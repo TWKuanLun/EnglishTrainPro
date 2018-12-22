@@ -6,6 +6,12 @@ namespace EnglishTrainPro.DataObject
     [Serializable]
     abstract class WebDictionary
     {
+        public enum DictionaryType
+        {
+            Yahoo,
+            Cambridge
+        }
+        public DictionaryType Type { get; set; }
         protected WebDictionary(string word, Dictionary<string, Dictionary<string, List<Sentence>>> sentences)
         {
             this.word = word.ToLower();

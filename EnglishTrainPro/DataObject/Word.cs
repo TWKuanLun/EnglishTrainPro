@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace EnglishTrainPro.DataObject
 {
+    [Serializable]
     class Word
     {
         private readonly string word;
@@ -16,6 +17,7 @@ namespace EnglishTrainPro.DataObject
         public List<WebDictionary> dictionary { get; set; }
         public Word(string word)
         {
+            word = word.ToLower();
             this.word = word;
             Remark = string.Empty;
             Weight = 3;
